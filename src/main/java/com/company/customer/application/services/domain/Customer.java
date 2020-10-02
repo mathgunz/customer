@@ -1,6 +1,8 @@
 package com.company.customer.application.services.domain;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer implements Serializable {
 
     public static final String CACHE_NAME = "Customer";
     private Long id;

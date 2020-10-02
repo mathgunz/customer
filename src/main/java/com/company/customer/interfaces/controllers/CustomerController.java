@@ -4,10 +4,9 @@ import com.company.customer.application.mappers.CustomerToCustomerDTOConverter;
 import com.company.customer.application.services.domain.Customer;
 import com.company.customer.application.usecases.GetCustumerUseCase;
 import com.company.customer.interfaces.controllers.dtos.CustomerDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/customers")
 @RestController
@@ -22,19 +21,49 @@ public class CustomerController {
         this.customerToCustomerDTO = customerToCustomerDTO;
     }
 
-    @GetMapping
-    public String getCustomers(){
-        return "folano1, gulano2, fulano3";
-    };
 
     @GetMapping("{id}")
-    public CustomerDTO getCustomer(@PathVariable("id") Long id){
+    public CustomerDTO get(@PathVariable("id") Long id){
 
         Customer customer = getCustumerUseCase.getCustomerById(id);
 
-        CustomerDTO customerDTO = customerToCustomerDTO.convert(customer);
+        return customerToCustomerDTO.convert(customer);
+    }
 
-        return customerDTO;
+    @GetMapping
+    public List<CustomerDTO> findAll() {
+        return getCustumerUseCase.findAll().stream().map(customerToCustomerDTO::convert).collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public CustomerDTO create(@RequestBody CustomerDTO customerDTO) {
+
+        Customer customer = getCustumerUseCase.create(Customer.newBuilder()
+                .withName(customerDTO.getName())
+                .withLastName(customerDTO.getLastName())
+                .withDocument(customerDTO.getDocument())
+                .build());
+
+        return customerToCustomerDTO.convert(customer);
+    }
+
+    @PutMapping("{id}")
+    public CustomerDTO update(@RequestBody CustomerDTO customerDTO, @PathVariable Long id) {
+
+
+        Customer result = getCustumerUseCase.update(Customer.newBuilder()
+                .withId(id)
+                .withName(customerDTO.getName())
+                .withLastName(customerDTO.getLastName())
+                .withDocument(customerDTO.getDocument())
+                .build());
+
+        return customerToCustomerDTO.convert(result);
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable Long id) {
+        getCustumerUseCase.delete(id);
     }
 
 

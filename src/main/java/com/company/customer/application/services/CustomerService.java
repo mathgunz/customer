@@ -27,6 +27,7 @@ public class CustomerService implements GetCustumerUseCase {
         this.customerEntityToCustomerDomainConverter = customerEntityToCustomerDomainConverter;
     }
 
+    @Override
     @Cacheable(cacheNames = "Customer", key="#root.method.name")
     public List<Customer> findAll() {
         return customerRepository.findAll()
@@ -46,6 +47,7 @@ public class CustomerService implements GetCustumerUseCase {
         return customer;
     }
 
+    @Override
     @CacheEvict(cacheNames = "Customer", allEntries = true)
     public Customer create(final Customer customer) {
 
@@ -58,18 +60,35 @@ public class CustomerService implements GetCustumerUseCase {
         return customerEntityToCustomerDomainConverter.convert(customerEntity);
     }
 
+    @Override
     @CachePut(cacheNames = Customer.CACHE_NAME, key="#customer.getId()")
     public Customer update(final Customer customer) {
-        if(customer.getId() == null) {
+
+        Optional<CustomerEntity> customerEntity = customerRepository.findById(customer.getId());
+
+        if(!customerEntity.isPresent()) {
             throw new EntityNotFoundException("Identifier is empty");
         }
 
-        CustomerEntity customerEntity = customerRepository.save(CustomerEntity.newBuilder()
+        CustomerEntity result = customerRepository.save(CustomerEntity.newBuilder()
                 .withDocument(customer.getDocument())
                 .withLastName(customer.getLastName())
                 .withName(customer.getName())
                 .build());
 
-        return customerEntityToCustomerDomainConverter.convert(customerEntity);
+        return customerEntityToCustomerDomainConverter.convert(result);
+    }
+
+    @Override
+    @CacheEvict(cacheNames = Customer.CACHE_NAME, key="#id")
+    public void delete(final Long id) {
+
+        Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
+
+        if(!customerEntity.isPresent()) {
+            throw new EntityNotFoundException("Identifier is empty");
+        }
+
+        customerRepository.delete(customerEntity.get());
     }
 }
