@@ -1,5 +1,7 @@
 package com.company.customer.interfaces.controllers;
 
+import com.company.customer.application.mappers.CustomerToCustomerDTOConverter;
+import com.company.customer.application.services.domain.Customer;
 import com.company.customer.application.usecases.GetCustumerUseCase;
 import com.company.customer.interfaces.controllers.dtos.CustomerDTO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 
     private final GetCustumerUseCase getCustumerUseCase;
+    private final CustomerToCustomerDTOConverter customerToCustomerDTO;
 
-    public CustomerController(GetCustumerUseCase getCustumerUseCase){
+    public CustomerController(GetCustumerUseCase getCustumerUseCase,
+                              CustomerToCustomerDTOConverter customerToCustomerDTO){
         this.getCustumerUseCase = getCustumerUseCase;
+        this.customerToCustomerDTO = customerToCustomerDTO;
     }
 
     @GetMapping
@@ -23,9 +28,12 @@ public class CustomerController {
     };
 
     @GetMapping("{id}")
-    public CustomerDTO getCustomer(@PathVariable("id") Integer id){
+    public CustomerDTO getCustomer(@PathVariable("id") Long id){
 
-        CustomerDTO customerDTO = getCustumerUseCase.getCustomerById(id);
+        Customer customer = getCustumerUseCase.getCustomerById(id);
+
+        CustomerDTO customerDTO = customerToCustomerDTO.convert(customer);
+
         return customerDTO;
     }
 

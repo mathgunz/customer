@@ -1,7 +1,7 @@
 package com.company.customer.application.usecases;
 
-import com.company.customer.interfaces.controllers.dtos.CustomerDTO;
+import com.company.customer.application.services.domain.Customer;
 
 public interface GetCustumerUseCase {
-    public CustomerDTO getCustomerById(Integer id);
+    public Customer getCustomerById(Long id);
 }

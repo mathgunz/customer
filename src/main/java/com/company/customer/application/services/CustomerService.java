@@ -1,31 +1,33 @@
 package com.company.customer.application.services;
 
-import com.company.customer.application.CustomerToCustomerDTO;
-import com.company.customer.application.adapters.CustomerToCustomerDTOConverter;
-import com.company.customer.application.domain.Customer;
-import com.company.customer.application.usecases.GetCustomerRepositoryUseCase;
+import com.company.customer.application.services.domain.Customer;
+import com.company.customer.application.services.mappers.CustomerEntityToCustomerDomainConverter;
 import com.company.customer.application.usecases.GetCustumerUseCase;
-import com.company.customer.interfaces.controllers.dtos.CustomerDTO;
+import com.company.customer.repositories.CustomerRepository;
+import com.company.customer.repositories.entities.CustomerEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomerService implements GetCustumerUseCase {
 
+    private final CustomerRepository customerRepository;
+    private final CustomerEntityToCustomerDomainConverter customerEntityToCustomerDomainConverter;
 
-    private final GetCustomerRepositoryUseCase getCustomerRepositoryUseCase;
-    private final CustomerToCustomerDTOConverter customerToCustomerDTO;
-
-    public CustomerService(final GetCustomerRepositoryUseCase getCustomerRepositoryUseCase,
-                           final CustomerToCustomerDTOConverter customerToCustomerDTO){
-        this.getCustomerRepositoryUseCase = getCustomerRepositoryUseCase;
-        this.customerToCustomerDTO = customerToCustomerDTO;
+    public CustomerService(final CustomerRepository customerRepository,
+                           final CustomerEntityToCustomerDomainConverter customerEntityToCustomerDomainConverter){
+        this.customerRepository = customerRepository;
+        this.customerEntityToCustomerDomainConverter = customerEntityToCustomerDomainConverter;
     }
 
     @Override
-    public CustomerDTO getCustomerById(Integer id) {
+    public Customer getCustomerById(Long id) {
 
-        Customer customer = getCustomerRepositoryUseCase.getCustomerById(id);
+        Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
 
-        return customerToCustomerDTO.convert(customer);
+        Customer customer = customerEntityToCustomerDomainConverter.convert(customerEntity.get());
+
+        return customer;
     }
 }
