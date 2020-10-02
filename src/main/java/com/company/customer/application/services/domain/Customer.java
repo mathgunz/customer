@@ -2,6 +2,7 @@ package com.company.customer.application.services.domain;
 
 public class Customer {
 
+    public static final String CACHE_NAME = "Customer";
     private Long id;
     private String name;
     private String lastName;
