@@ -8,14 +8,56 @@ public class CustomerDTO implements Serializable {
     private String name;
     private String lastName;
     private String document;
+    private AddressDTO address;
 
     public CustomerDTO(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     private CustomerDTO(Builder builder) {
         id = builder.id;
         name = builder.name;
         lastName = builder.lastName;
         document = builder.document;
+        address = builder.addressDTO;
     }
 
     public static Builder newBuilder() {
@@ -28,46 +70,17 @@ public class CustomerDTO implements Serializable {
         builder.name = copy.getName();
         builder.lastName = copy.getLastName();
         builder.document = copy.getDocument();
+        builder.addressDTO = copy.getAddress();
         return builder;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setDocument(String document) {
-        this.document = document;
-    }
 
     public static final class Builder {
         private Long id;
         private String name;
         private String lastName;
         private String document;
+        private AddressDTO addressDTO;
 
         private Builder() {
         }
@@ -89,6 +102,11 @@ public class CustomerDTO implements Serializable {
 
         public Builder withDocument(String val) {
             document = val;
+            return this;
+        }
+
+        public Builder withAddressDTO(AddressDTO val) {
+            addressDTO = val;
             return this;
         }
 

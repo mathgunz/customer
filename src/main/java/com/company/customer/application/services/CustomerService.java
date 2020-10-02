@@ -1,9 +1,12 @@
 package com.company.customer.application.services;
 
-import com.company.customer.application.services.domain.Customer;
+import com.company.customer.application.services.domains.Address;
+import com.company.customer.application.services.domains.Customer;
+import com.company.customer.application.services.mappers.ConverterCustomerDomainToCustomerEntity;
 import com.company.customer.application.services.mappers.CustomerEntityToCustomerDomainConverter;
 import com.company.customer.application.usecases.GetCustumerUseCase;
 import com.company.customer.repositories.CustomerRepository;
+import com.company.customer.repositories.entities.AddressEntity;
 import com.company.customer.repositories.entities.CustomerEntity;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -20,11 +23,14 @@ public class CustomerService implements GetCustumerUseCase {
 
     private final CustomerRepository customerRepository;
     private final CustomerEntityToCustomerDomainConverter customerEntityToCustomerDomainConverter;
+    private final ConverterCustomerDomainToCustomerEntity converterCustomerDomainToCustomerEntity;
 
     public CustomerService(final CustomerRepository customerRepository,
-                           final CustomerEntityToCustomerDomainConverter customerEntityToCustomerDomainConverter){
+                           final CustomerEntityToCustomerDomainConverter customerEntityToCustomerDomainConverter,
+                           final ConverterCustomerDomainToCustomerEntity converterCustomerDomainToCustomerEntity){
         this.customerRepository = customerRepository;
         this.customerEntityToCustomerDomainConverter = customerEntityToCustomerDomainConverter;
+        this.converterCustomerDomainToCustomerEntity = converterCustomerDomainToCustomerEntity;
     }
 
     @Override
@@ -51,11 +57,7 @@ public class CustomerService implements GetCustumerUseCase {
     @CacheEvict(cacheNames = "Customer", allEntries = true)
     public Customer create(final Customer customer) {
 
-        CustomerEntity customerEntity = customerRepository.save(CustomerEntity.newBuilder()
-                .withDocument(customer.getDocument())
-                .withLastName(customer.getLastName())
-                .withName(customer.getName())
-                .build());
+        CustomerEntity customerEntity = customerRepository.save(converterCustomerDomainToCustomerEntity.convert(customer));
 
         return customerEntityToCustomerDomainConverter.convert(customerEntity);
     }
@@ -64,17 +66,19 @@ public class CustomerService implements GetCustumerUseCase {
     @CachePut(cacheNames = Customer.CACHE_NAME, key="#customer.getId()")
     public Customer update(final Customer customer) {
 
-        Optional<CustomerEntity> customerEntity = customerRepository.findById(customer.getId());
+        Optional<CustomerEntity> customerOptional = customerRepository.findById(customer.getId());
 
-        if(!customerEntity.isPresent()) {
+        if(!customerOptional.isPresent()) {
             throw new EntityNotFoundException("Identifier is empty");
         }
 
-        CustomerEntity result = customerRepository.save(CustomerEntity.newBuilder()
-                .withDocument(customer.getDocument())
-                .withLastName(customer.getLastName())
+        CustomerEntity customerEntity = CustomerEntity.newBuilder(customerOptional.get())
                 .withName(customer.getName())
-                .build());
+                .withLastName(customer.getLastName())
+                .withDocument(customer.getDocument())
+                .build();
+
+        CustomerEntity result = customerRepository.save(customerEntity);
 
         return customerEntityToCustomerDomainConverter.convert(result);
     }

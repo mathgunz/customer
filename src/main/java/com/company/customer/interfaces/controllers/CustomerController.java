@@ -1,7 +1,8 @@
 package com.company.customer.interfaces.controllers;
 
 import com.company.customer.application.mappers.CustomerToCustomerDTOConverter;
-import com.company.customer.application.services.domain.Customer;
+import com.company.customer.application.services.domains.Address;
+import com.company.customer.application.services.domains.Customer;
 import com.company.customer.application.usecases.GetCustumerUseCase;
 import com.company.customer.interfaces.controllers.dtos.CustomerDTO;
 import org.springframework.web.bind.annotation.*;
@@ -38,11 +39,7 @@ public class CustomerController {
     @PostMapping
     public CustomerDTO create(@RequestBody CustomerDTO customerDTO) {
 
-        Customer customer = getCustumerUseCase.create(Customer.newBuilder()
-                .withName(customerDTO.getName())
-                .withLastName(customerDTO.getLastName())
-                .withDocument(customerDTO.getDocument())
-                .build());
+        Customer customer = getCustumerUseCase.create(this.converterDtoTDomain(customerDTO));
 
         return customerToCustomerDTO.convert(customer);
     }
@@ -66,5 +63,18 @@ public class CustomerController {
         getCustumerUseCase.delete(id);
     }
 
+    private Customer converterDtoTDomain(CustomerDTO customerDTO) {
 
+        return Customer.newBuilder()
+                .withName(customerDTO.getName())
+                .withLastName(customerDTO.getLastName())
+                .withDocument(customerDTO.getDocument())
+                .withAddress(Address.newBuilder()
+                        .withZipCode(customerDTO.getAddress().getZipCode())
+                        .withState(customerDTO.getAddress().getState())
+                        .withId(customerDTO.getAddress().getId())
+                        .withCity(customerDTO.getAddress().getCity())
+                        .build())
+                .build();
+    }
 }

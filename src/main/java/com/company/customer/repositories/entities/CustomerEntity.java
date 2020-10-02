@@ -13,7 +13,8 @@ public class CustomerEntity {
     private String lastName;
     private String document;
 
-    public CustomerEntity(){}
+    @OneToOne(cascade = CascadeType.ALL)
+    private AddressEntity addressEntity;
 
     public Long getId() {
         return id;
@@ -31,11 +32,18 @@ public class CustomerEntity {
         return document;
     }
 
+    public AddressEntity getAddressEntity() {
+        return addressEntity;
+    }
+
+    public CustomerEntity(){}
+
     private CustomerEntity(Builder builder) {
         id = builder.id;
         name = builder.name;
         lastName = builder.lastName;
         document = builder.document;
+        addressEntity = builder.addressEntity;
     }
 
     public static Builder newBuilder() {
@@ -48,15 +56,16 @@ public class CustomerEntity {
         builder.name = copy.getName();
         builder.lastName = copy.getLastName();
         builder.document = copy.getDocument();
+        builder.addressEntity = copy.getAddressEntity();
         return builder;
     }
-
 
     public static final class Builder {
         private Long id;
         private String name;
         private String lastName;
         private String document;
+        private AddressEntity addressEntity;
 
         private Builder() {
         }
@@ -78,6 +87,11 @@ public class CustomerEntity {
 
         public Builder withDocument(String val) {
             document = val;
+            return this;
+        }
+
+        public Builder withAddressEntity(AddressEntity val) {
+            addressEntity = val;
             return this;
         }
 

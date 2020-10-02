@@ -1,6 +1,6 @@
 package com.company.customer.application.usecases;
 
-import com.company.customer.application.services.domain.Customer;
+import com.company.customer.application.services.domains.Customer;
 
 import java.util.List;
 
