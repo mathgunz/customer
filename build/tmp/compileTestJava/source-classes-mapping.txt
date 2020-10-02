@@ -1,0 +1,2 @@
+com/company/customer/CustomerApplicationTests.java
+ com.company.customer.CustomerApplicationTests

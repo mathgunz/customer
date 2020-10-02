@@ -1,2 +1,21 @@
 com/company/customer/CustomerApplication.java
  com.company.customer.CustomerApplication
+com/company/customer/application/usecases/GetCustomerRepositoryUseCase.java
+ com.company.customer.application.usecases.GetCustomerRepositoryUseCase
+com/company/customer/interfaces/controllers/dtos/CustomerDTO.java
+ com.company.customer.interfaces.controllers.dtos.CustomerDTO
+com/company/customer/application/usecases/GetCustumerUseCase.java
+ com.company.customer.application.usecases.GetCustumerUseCase
+com/company/customer/interfaces/controllers/CustomerController.java
+ com.company.customer.interfaces.controllers.CustomerController
+com/company/customer/application/domain/Customer.java
+ com.company.customer.application.domain.Customer
+ com.company.customer.application.domain.Customer$Builder
+com/company/customer/repositories/CustomerRepository.java
+ com.company.customer.repositories.CustomerRepository
+com/company/customer/application/CustomerToCustomerDTO.java
+ com.company.customer.application.CustomerToCustomerDTO
+com/company/customer/application/adapters/CustomerToCustomerDTOConverter.java
+ com.company.customer.application.adapters.CustomerToCustomerDTOConverter
+com/company/customer/application/services/CustomerService.java
+ com.company.customer.application.services.CustomerService
