@@ -47,7 +47,6 @@ public class CustomerService implements GetCustumerUseCase {
     public Customer getCustomerById(Long id) {
 
         Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
-
         Customer customer = customerEntityToCustomerDomainConverter.convert(customerEntity.get());
 
         return customer;
@@ -58,7 +57,6 @@ public class CustomerService implements GetCustumerUseCase {
     public Customer create(final Customer customer) {
 
         CustomerEntity customerEntity = customerRepository.save(converterCustomerDomainToCustomerEntity.convert(customer));
-
         return customerEntityToCustomerDomainConverter.convert(customerEntity);
     }
 
@@ -68,17 +66,9 @@ public class CustomerService implements GetCustumerUseCase {
 
         Optional<CustomerEntity> customerOptional = customerRepository.findById(customer.getId());
 
-        if(!customerOptional.isPresent()) {
-            throw new EntityNotFoundException("Identifier is empty");
-        }
+        if(!customerOptional.isPresent()) {throw new EntityNotFoundException("Identifier is empty");}
 
-        CustomerEntity customerEntity = CustomerEntity.newBuilder(customerOptional.get())
-                .withName(customer.getName())
-                .withLastName(customer.getLastName())
-                .withDocument(customer.getDocument())
-                .build();
-
-        CustomerEntity result = customerRepository.save(customerEntity);
+        CustomerEntity result = customerRepository.save(converterCustumerDomainToCustomerEntity(customerOptional.get(), customer));
 
         return customerEntityToCustomerDomainConverter.convert(result);
     }
@@ -94,5 +84,14 @@ public class CustomerService implements GetCustumerUseCase {
         }
 
         customerRepository.delete(customerEntity.get());
+    }
+
+    private CustomerEntity converterCustumerDomainToCustomerEntity(CustomerEntity customerEntity, Customer customer) {
+
+        return CustomerEntity.newBuilder(customerEntity)
+                .withName(customer.getName())
+                .withLastName(customer.getLastName())
+                .withDocument(customer.getDocument())
+                .build();
     }
 }
